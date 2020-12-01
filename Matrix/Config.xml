@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<config>
-  <Interval>100</Interval>
-  <NormalColor>DarkBlue</NormalColor>
-  <GlowColor>Cyan</GlowColor>
-  <FancyColor>White</FancyColor>
-</config>

@@ -12,6 +12,7 @@ namespace Build
     class Program
     {
         static bool exitSystem = false;
+        public static string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "StarFall");
 
         #region Trap application termination
         [DllImport("Kernel32")]
@@ -64,12 +65,12 @@ namespace Build
         static void GenerateMatrixBinary(int screenCount)
         {
             string app = "Matrix" + screenCount.ToString() + ".exe";
-            if (File.Exists(Environment.CurrentDirectory + "\\" + app))
+            if (File.Exists(path + "\\" + app))
             {
-                File.Delete(Environment.CurrentDirectory + "\\" + app);
+                File.Delete(path + "\\" + app);
             }
-            File.Copy("Matrix.exe", Environment.CurrentDirectory + "\\Matrix" + screenCount.ToString() + ".exe");
-            Console.WriteLine("Generated: " + Environment.CurrentDirectory + "\\Matrix" + screenCount.ToString() + ".exe");
+            File.Copy(path + "\\Matrix.exe", path + "\\Matrix" + screenCount.ToString() + ".exe");
+            Console.WriteLine("Generated: " + path + "\\Matrix" + screenCount.ToString() + ".exe");
         }
 
         static Process GenerateMatrixProcess(int screenCount)
@@ -79,7 +80,7 @@ namespace Build
             {
                 StartInfo =
                 {
-                    FileName = "Matrix" + screenCount.ToString() + ".exe",
+                    FileName = path + "\\Matrix" + screenCount.ToString() + ".exe",
                     WindowStyle = ProcessWindowStyle.Normal
                 }
             };
@@ -91,6 +92,13 @@ namespace Build
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
+            //create appdata
+            if (!File.Exists(path + "\\Matrix.exe"))
+            {
+                Directory.CreateDirectory(path);
+                File.Copy("Matrix.exe", path + "\\Matrix.exe");
+            }
+
             List<Process> matrixProcessList = new List<Process>();
             var allScreens = Screen.AllScreens.ToList();
             
@@ -100,9 +108,12 @@ namespace Build
             {
                 Thread.Sleep(1000);
                 Console.WriteLine("Screen detected: " + allScreens[screenCount].DeviceName);
+
                 Process matrix = GenerateMatrixProcess(screenCount);
+
                 matrix.Start();
                 Thread.Sleep(1000);
+
                 if (screenCount == 0)
                 {
                     MatrixNames.Add(matrix.ProcessName);
