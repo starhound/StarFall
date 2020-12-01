@@ -58,7 +58,6 @@ namespace Build
             return true;
         }
         #endregion
-
         [DllImport("user32.dll", SetLastError = true)]
         internal static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
 

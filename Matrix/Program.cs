@@ -11,7 +11,6 @@ namespace matrix
         static int Counter;
         static Random rand = new Random();
         static int Interval = 100; 
-
         static ConsoleColor NormalColor = ConsoleColor.DarkBlue;
         static ConsoleColor GlowColor = ConsoleColor.Cyan;
         static ConsoleColor FancyColor = ConsoleColor.White;
@@ -122,7 +121,6 @@ namespace matrix
                     UpdateAllColumns(width, height, y);
                     if (Counter > (3 * Interval))
                         Counter = 0;
-
                 }
             }
             catch(Exception ex)
