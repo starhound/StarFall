@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -129,6 +130,12 @@ namespace Build
                 MatrixNames.Add(matrix.ProcessName);
                 screenCount += 1;
             }
+
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            // timer.Interval = 4 minutes
+            timer.Interval = (int)(TimeSpan.TicksPerMinute * 4 / TimeSpan.TicksPerMillisecond);
+            timer.Tick += (sender, arg) => { Cursor.Position = new Point(Cursor.Position.X + 1, Cursor.Position.Y + 1); };
+            timer.Start();
 
             Console.ReadLine();
         }
