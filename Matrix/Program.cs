@@ -99,16 +99,10 @@ namespace matrix
         {
             try
             {
-                Thread.Sleep(2000);
-                
-                Process[] processes = Process.GetProcessesByName("matrix");
-
-                foreach (Process proc in processes)
-                {
-                    SetForegroundWindow(proc.MainWindowHandle);
-                    SendKeys.SendWait("{F11}");
-                }
-
+                Process process = Process.GetCurrentProcess();
+                Thread.Sleep(5000);
+                SetForegroundWindow(process.MainWindowHandle);
+                SendKeys.SendWait("{F11}");
                 Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
                 Console.ForegroundColor = NormalColor;
                 Console.WindowLeft = Console.WindowTop = 0;

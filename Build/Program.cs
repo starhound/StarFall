@@ -99,12 +99,25 @@ namespace Build
 
             foreach(var screen in allScreens)
             {
-                Console.WriteLine("Screen detected: " + screen.DeviceName);
+                Thread.Sleep(1000);
+                Console.WriteLine("Screen detected: " + allScreens[screenCount].DeviceName);
                 Process matrix = GenerateMatrixProcess(screenCount);
                 matrix.Start();
+                Thread.Sleep(1000);
+                if (screenCount == 0)
+                {
+                    MatrixNames.Add(matrix.ProcessName);
+                    screenCount += 1;
+                    continue;
+                }
+                MoveWindow(matrix.MainWindowHandle, 
+                    allScreens[screenCount].WorkingArea.Right, 
+                    allScreens[screenCount].WorkingArea.Top, 
+                    allScreens[screenCount].WorkingArea.Width, 
+                    allScreens[screenCount].WorkingArea.Height, 
+                    false);
                 MatrixNames.Add(matrix.ProcessName);
-                MoveWindow(matrix.MainWindowHandle, screen.WorkingArea.Right, screen.WorkingArea.Top, screen.WorkingArea.Width, screen.WorkingArea.Height, false);
-                screenCount++;
+                screenCount += 1;
             }
 
             Console.ReadLine();
