@@ -10,7 +10,6 @@ namespace matrix
     {
         static int Counter;
         static Random rand = new Random();
-
         static int Interval = 100; 
 
         static ConsoleColor NormalColor = ConsoleColor.DarkBlue;
@@ -36,39 +35,6 @@ namespace matrix
             }
         }
 
-        static void Main()
-        {
-            Thread.Sleep(2000);
-            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-            Process[] processes = Process.GetProcessesByName("matrix");
-
-            foreach (Process proc in processes)
-            {
-                SetForegroundWindow(proc.MainWindowHandle);
-                SendKeys.SendWait("{F11}");
-            }
-
-            Console.ForegroundColor = NormalColor;
-            Console.WindowLeft = Console.WindowTop = 0;
-            Console.WindowHeight = Console.BufferHeight = Console.LargestWindowHeight;
-            Console.WindowWidth = Console.BufferWidth = Console.LargestWindowWidth - 3;
-            Console.SetWindowPosition(0, 0);
-            Console.CursorVisible = false;
-
-            int width, height;
-            int[] y;
-            Initialize(out width, out height, out y);//Setting the Starting Point
-           
-            while (true)
-            {
-                Counter = Counter + 1;
-                UpdateAllColumns(width, height, y);
-                if (Counter > (3 * Interval))
-                    Counter = 0;
-
-            }
-        }
-
         private static void UpdateAllColumns(int width, int height, int[] y)
         {
             int x;
@@ -80,6 +46,7 @@ namespace matrix
                         Console.ForegroundColor = FancyColor;
                     else
                         Console.ForegroundColor = GlowColor;
+
                     Console.SetCursorPosition(x, y[x]);
                     Console.Write(AsciiCharacter);
 
@@ -87,15 +54,19 @@ namespace matrix
                         Console.ForegroundColor = FancyColor;
                     else
                         Console.ForegroundColor = NormalColor;
+
                     int temp = y[x] - 2;
+
                     Console.SetCursorPosition(x, inScreenYPosition(temp, height));
                     Console.Write(AsciiCharacter);
 
                     int temp1 = y[x] - 20;
+
                     Console.SetCursorPosition(x, inScreenYPosition(temp1, height));
                     Console.Write(' ');
+
                     y[x] = inScreenYPosition(y[x] + 1, height);
-                   
+
                 }
             }
         }
@@ -104,7 +75,7 @@ namespace matrix
         {
             if (yPosition < 0)
                 return yPosition + height;
-            else if (yPosition < height) 
+            else if (yPosition < height)
                 return yPosition;
             else
                 return 0;
@@ -115,11 +86,55 @@ namespace matrix
             height = Console.WindowHeight;
             width = Console.WindowWidth - 1;
             y = new int[width];
+
             Console.Clear();
 
             for (int x = 0; x < width; ++x)
             {
                 y[x] = rand.Next(height);
+            }
+        }
+
+        static void Main()
+        {
+            try
+            {
+                Thread.Sleep(2000);
+                
+                Process[] processes = Process.GetProcessesByName("matrix");
+
+                foreach (Process proc in processes)
+                {
+                    SetForegroundWindow(proc.MainWindowHandle);
+                    SendKeys.SendWait("{F11}");
+                }
+
+                Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+                Console.ForegroundColor = NormalColor;
+                Console.WindowLeft = Console.WindowTop = 0;
+                Console.WindowHeight = Console.BufferHeight = Console.LargestWindowHeight;
+                Console.WindowWidth = Console.BufferWidth = Console.LargestWindowWidth;
+                Console.SetWindowPosition(0, 0);
+                Console.CursorVisible = false;
+
+                int width, height;
+                int[] y;
+
+                Initialize(out width, out height, out y);//Setting the Starting Point
+
+                while (true)
+                {
+                    Counter = Counter + 1;
+                    UpdateAllColumns(width, height, y);
+                    if (Counter > (3 * Interval))
+                        Counter = 0;
+
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
             }
         }
     }

@@ -19,6 +19,7 @@ namespace Build
         private delegate bool EventHandler(CtrlType sig);
         static EventHandler _handler;
         static List<string> MatrixPaths = new List<string>();
+        static List<string> MatrixNames = new List<string>();
 
         enum CtrlType
         {
@@ -33,7 +34,20 @@ namespace Build
         {
             Console.WriteLine("Exiting system due to external CTRL-C, or process kill, or shutdown");
 
-            
+            foreach(string name in MatrixNames)
+            {
+                foreach (var process in Process.GetProcessesByName(name))
+                {
+                    Console.WriteLine("Killing Process: " + process.ProcessName);
+                    process.Kill();
+                }         
+            }
+
+            foreach (string path in MatrixPaths)
+            {
+                Console.WriteLine("Deleting " + path);
+                File.Delete(path);
+            }
 
             //allow main to run off
             exitSystem = true;
@@ -52,7 +66,9 @@ namespace Build
         {
             string app = "Matrix" + screenCount.ToString() + ".exe";
             if (File.Exists(Environment.CurrentDirectory + "\\" + app))
-                return;
+            {
+                File.Delete(Environment.CurrentDirectory + "\\" + app);
+            }
             File.Copy("Matrix.exe", Environment.CurrentDirectory + "\\Matrix" + screenCount.ToString() + ".exe");
             Console.WriteLine("Generated: " + Environment.CurrentDirectory + "\\Matrix" + screenCount.ToString() + ".exe");
         }
@@ -83,26 +99,14 @@ namespace Build
 
             foreach(var screen in allScreens)
             {
-                screenCount++;
                 Console.WriteLine("Screen detected: " + screen.DeviceName);
                 Process matrix = GenerateMatrixProcess(screenCount);
                 matrix.Start();
+                MatrixNames.Add(matrix.ProcessName);
                 MoveWindow(matrix.MainWindowHandle, screen.WorkingArea.Right, screen.WorkingArea.Top, screen.WorkingArea.Width, screen.WorkingArea.Height, false);
+                screenCount++;
             }
 
-            while(Console.ReadKey().Equals('a'))
-            {
-                foreach (var process in Process.GetProcessesByName("Matrix"))
-                {
-                    process.Kill();
-                }
-
-                foreach (string path in MatrixPaths)
-                {
-                    Console.WriteLine("Deleting " + path);
-                    File.Delete(path);
-                }
-            }
             Console.ReadLine();
         }
     }
